@@ -9,7 +9,8 @@ import pandas as pd
 import os
 import time
 class ChessboardCornerDetector:
-    def getCornerMat(self, corners, num_samples = 5):
+    #calculate average pixel/cm based on x and y axis
+    def getAvgRatios(self, corners, num_samples):
         random.seed()
         hoz_mins = []
         ver_mins = []
@@ -32,6 +33,9 @@ class ChessboardCornerDetector:
         ver_mins.sort()
         hoz_avg_ratio = hoz_mins[num_samples//2]
         ver_avg_ratio = ver_mins[num_samples//2]
+        return hoz_avg_ratio, ver_avg_ratio
+    # calculate the smallest and largest coordinates on x,y axis of corners
+    def getMatBoundary(self, corners):
         min_x = 99999
         max_x = 0
         min_y = 99999
@@ -46,10 +50,47 @@ class ChessboardCornerDetector:
             elif y < min_y:
                 min_y = y
         print(min_x, min_y, max_x, max_y)
+        return min_x, min_y, max_x, max_y
+    # initialize corner matrix with detected corners
+    def initializeMat(self, corners, min_x, min_y, max_x, max_y, hoz_avg_ratio, ver_avg_ratio):
         num_cols = math.ceil((max_x-min_x)/hoz_avg_ratio)
         num_rows = math.ceil((max_y-min_y)/ver_avg_ratio)
-        print(num_cols)
-        print(num_rows)
+        # matx = np.zeros((num_cols, num_rows))
+        # maty = np.zeros((num_cols, num_rows))
+        mat = np.zeros((num_cols, num_rows, 2))
+        #print(mat)
+        for i, xy in enumerate(corners):
+            col = math.floor((xy[0]-min_x)*(num_cols-1)/(max_x - min_x) + 0.5)
+            row = math.floor((xy[1]-min_y)*(num_rows-1)/(max_y - min_y)+ 0.5)
+            #print(xy)
+            #print(col, row)
+            # matx[col, row] = xy[0]
+            # maty[col, row] = xy[1]
+            mat[col, row] = xy
+        #print(mat[:10, :10]) 
+        # np.savetxt("./chessboard_corner_detection/mat_x.csv", matx, delimiter=",")
+        # np.savetxt("./chessboard_corner_detection/mat_y.csv", maty, delimiter=",")
+        return mat
+    #fill in the blanks in the initialized matrix
+    def refineMat(self, mat):
+        col_max, row_max = mat.shape[:2]
+        print(col_max, row_max)
+        blanks = []
+        for i,col in enumerate(mat):
+            for j, cell in enumerate(col):
+                print(cell)
+                if np.linalg.norm(cell) == 0:
+                    print(cell)
+                    blanks.append((i,j))
+        print(blanks)    
+
+    def getCornerMat(self, corners, num_samples = 5):
+        hoz_avg_ratio, ver_avg_ratio = self.getAvgRatios(corners, num_samples)
+        print(hoz_avg_ratio, ver_avg_ratio)
+        min_x, min_y, max_x, max_y = self.getMatBoundary(corners)
+        mat = self.initializeMat(corners, min_x, min_y, max_x, max_y, hoz_avg_ratio, ver_avg_ratio)
+        mat = self.refineMat(mat)
+        return mat
     def detect(self, args):
         self.img_path = args.chessboard_image
         try: 
