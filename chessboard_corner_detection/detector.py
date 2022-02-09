@@ -10,6 +10,9 @@ import os
 import time
 class ChessboardCornerDetector:
     #calculate average pixel/cm based on x and y axis
+    def train():
+        pass
+    
     def getAvgRatios(self, corners, num_samples):
         random.seed()
         hoz_mins = []
