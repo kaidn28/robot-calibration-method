@@ -73,17 +73,36 @@ class ChessboardCornerDetector:
         return mat
     #fill in the blanks in the initialized matrix
     def refineMat(self, mat):
-        col_max, row_max = mat.shape[:2]
-        print(col_max, row_max)
+        num_col, num_row = mat.shape[:2]
+        print(num_col, num_row)
         blanks = []
         for i,col in enumerate(mat):
             for j, cell in enumerate(col):
                 print(cell)
                 if np.linalg.norm(cell) == 0:
                     print(cell)
-                    blanks.append((i,j))
+                    blanks.append([i,j])
         print(blanks)    
-
+        while blanks:
+            blank = blanks[0]
+            col_blank = blank[0]
+            row_blank = blank[1]
+            neighbors = [
+                (col_blank-1, row_blank-1),
+                (col_blank-1, row_blank), 
+                (col_blank-1, row_blank+1),
+                (col_blank, row_blank-1),
+                (col_blank, row_blank+1),
+                (col_blank+1, row_blank-1),
+                (col_blank+1, row_blank),
+                (col_blank+1, row_blank+1)
+                ]
+            filled_neighbors = []
+            for n in neighbors:
+                if 0<= n[0] < num_col and 0<= n[1] < num_row:
+                    filled_neighbors.append((n, mat[n[0], n[1]]))
+            print(filled_neighbors)
+            break 
     def getCornerMat(self, corners, num_samples = 5):
         hoz_avg_ratio, ver_avg_ratio = self.getAvgRatios(corners, num_samples)
         print(hoz_avg_ratio, ver_avg_ratio)
