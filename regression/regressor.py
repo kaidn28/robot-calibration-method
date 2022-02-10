@@ -10,25 +10,26 @@ from sklearn.model_selection import train_test_split
 
 class Regressor:
     def __init__(self, args):
-        self.out_dir = args.out_dir
-        self.data = pd.read_csv(args.data).loc[:, ['x', 'y', 'x_gt', 'y_gt']]
-        self.data.info()
-        drawingBoard = np.zeros((700, 700)) + 255
-        drawingBoard = cv2.merge([drawingBoard, drawingBoard, drawingBoard])
-        data_draw = self.data.applymap(lambda x: int(x)*10 + 300).to_numpy()
-        # print(data_draw)
-        for x1, y1, x2, y2 in data_draw:
-            cv2.line(drawingBoard, (x1,y1), (x2,y2), (0, 255, 0), 2)
-            cv2.circle(drawingBoard, (x1,y1), 2, (0,0,255), -1)
-            cv2.circle(drawingBoard, (x2,y2), 2, (255,0,0), -1)
-        #cv2.imshow('abc', drawingBoard)
-        
-        # cv2.waitKey()
-        # cv2.destroyAllWindows()
-        # cv2.imwrite('visualize.jpg', drawingBoard)
-        # print(self.data)
-        self.drawingBoard = drawingBoard
-        print(self.data)
+        self.out_dir = args.out_dir 
+        if hasattr(args, "data"):
+            self.data = pd.read_csv(args.data).loc[:, ['x', 'y', 'x_gt', 'y_gt']]
+            self.data.info()
+            drawingBoard = np.zeros((700, 700)) + 255
+            drawingBoard = cv2.merge([drawingBoard, drawingBoard, drawingBoard])
+            data_draw = self.data.applymap(lambda x: int(x)*10 + 300).to_numpy()
+            # print(data_draw)
+            for x1, y1, x2, y2 in data_draw:
+                cv2.line(drawingBoard, (x1,y1), (x2,y2), (0, 255, 0), 2)
+                cv2.circle(drawingBoard, (x1,y1), 2, (0,0,255), -1)
+                cv2.circle(drawingBoard, (x2,y2), 2, (255,0,0), -1)
+            #cv2.imshow('abc', drawingBoard)
+            
+            # cv2.waitKey()
+            # cv2.destroyAllWindows()
+            # cv2.imwrite('visualize.jpg', drawingBoard)
+            # print(self.data)
+            self.drawingBoard = drawingBoard
+            print(self.data)
     
     def train(self, lr = 0.1, max_iteration = 1000, print_after= 20, num_folds = 4):
         data_proc = self.data.sample(frac=1).to_numpy()

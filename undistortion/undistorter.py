@@ -1,4 +1,4 @@
-class Calibrator:
+class Undistorter:
     def __init__(self, args):
         pass
     def train(self):
