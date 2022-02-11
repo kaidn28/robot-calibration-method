@@ -76,16 +76,17 @@ class ChessboardCornerDetector:
         return mat
     #fill in the blanks in the initialized matrix
     def refineMat(self, mat):
+        print(mat[1,:])
         num_col, num_row = mat.shape[:2]
         print(num_col, num_row)
         blanks = []
         for i,col in enumerate(mat):
             for j, cell in enumerate(col):
-                print(cell)
+                #print(cell)
                 if np.linalg.norm(cell) == 0:
-                    print(cell)
+                    #print(cell)
                     blanks.append([i,j])
-        print(blanks)    
+        #print(blanks)    
         while blanks:
             blank = blanks[0]
             col_blank = blank[0]
@@ -104,11 +105,12 @@ class ChessboardCornerDetector:
             for n in neighbors:
                 if 0<= n[0] < num_col and 0<= n[1] < num_row:
                     filled_neighbors.append((n, mat[n[0], n[1]]))
-            print(filled_neighbors)
+            #print(filled_neighbors)
             break 
+        return mat
     def getCornerMat(self, corners, num_samples = 5):
         hoz_avg_ratio, ver_avg_ratio = self.getAvgRatios(corners, num_samples)
-        print(hoz_avg_ratio, ver_avg_ratio)
+        #print(hoz_avg_ratio, ver_avg_ratio)
         min_x, min_y, max_x, max_y = self.getMatBoundary(corners)
         mat = self.initializeMat(corners, min_x, min_y, max_x, max_y, hoz_avg_ratio, ver_avg_ratio)
         mat = self.refineMat(mat)
@@ -156,7 +158,7 @@ class ChessboardCornerDetector:
                             break
                     if not checked:        
                         corners.append(np.array([x,y]))
-        print(corners)
+        #print(corners)
         mat = self.getCornerMat(corners)
         for i, (x, y) in enumerate(corners):
             cv2.circle(self.img, (int(x),int(y)), 5, (0,0, 255), -1)
@@ -164,7 +166,7 @@ class ChessboardCornerDetector:
         cv2.imshow("abc", self.img)
         cv2.waitKey()
         cv2.destroyAllWindows()
-        return mat
+        return mat, img_gray
     
 
         

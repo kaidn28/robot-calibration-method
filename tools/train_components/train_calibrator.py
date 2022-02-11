@@ -29,9 +29,9 @@ def main():
     if args.chessboard_corner_re_detect:
         ccDetector.detect()
     if args.train_calibrator:
-        chessboard_mat = ccDetector.detect(args)
+        chessboard_mat, gray = ccDetector.detect(args)
         calibrator = Calibrator(args)
-        calibrator.fit(chessboard_mat)
+        calibrator.fit(chessboard_mat, gray)
     print("train complete")
 
 if __name__ == "__main__":
