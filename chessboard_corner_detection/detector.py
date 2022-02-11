@@ -10,7 +10,7 @@ import os
 import time
 class ChessboardCornerDetector:
     #calculate average pixel/cm based on x and y axis
-    def train():
+    def fit():
         pass
     
     def getAvgRatios(self, corners, num_samples):
@@ -164,7 +164,7 @@ class ChessboardCornerDetector:
         cv2.imshow("abc", self.img)
         cv2.waitKey()
         cv2.destroyAllWindows()
-    
+        return mat
     
 
         

@@ -31,7 +31,7 @@ class Regressor:
             self.drawingBoard = drawingBoard
             print(self.data)
     
-    def train(self, lr = 0.1, max_iteration = 1000, print_after= 20, num_folds = 4):
+    def fit(self, lr = 0.1, max_iteration = 1000, print_after= 20, num_folds = 4):
         data_proc = self.data.sample(frac=1).to_numpy()
         P_proc = data_proc[:, :2]
         A_proc = data_proc[:, 2:]

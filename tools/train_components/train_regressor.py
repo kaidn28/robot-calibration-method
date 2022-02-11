@@ -23,7 +23,7 @@ def main():
     print(args)
     if args.train_regressor:
         regressor = Regressor(args)
-        regressor.train()
+        regressor.fit()
     print("train complete")
 
 if __name__ == "__main__":

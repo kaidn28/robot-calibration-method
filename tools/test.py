@@ -7,7 +7,7 @@ import argparse
 import pandas as pd
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../'))
 from regression import Regressor
-from undistortion import Undistorter
+from calibration import Calibrator
 from object_detection import ObjectDetector
 def parse_args():
     parser =argparse.ArgumentParser(description="Testing pipeline")
@@ -19,7 +19,7 @@ def parse_args():
 
 def run_pipeline(args):
     detector = ObjectDetector(args)
-    undistorter = Undistorter(args)
+    calibrator = Calibrator(args)
     regressor = Regressor(args)
     image_names = os.listdir(args.images)
     results = []
@@ -27,11 +27,11 @@ def run_pipeline(args):
         image_path = os.path.join(args.images, n)
         print(image_path)
         image = cv2.imread(image_path)
-        distorted_image = Undistorter.predict(image)
-        objects = detector.predict(distorted_image)
+        objects = detector.predict(image)
         object_locations = []
         for o in objects:
-            reg_loc = regressor.predict(o.center)
+            calib_loc = calibrator.predict(o.center)
+            reg_loc = regressor.predict(calib_loc)
             object_locations.append(reg_loc)
         results.append([n, object_locations])
     return results
