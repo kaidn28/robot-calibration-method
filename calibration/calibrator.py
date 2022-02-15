@@ -3,7 +3,9 @@ import cv2
 class Calibrator:
     def __init__(self, args):
         pass
-    def fit(self, mat, gray):
+    def fit(self, mat, img):
+        # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        gray = img
         gray_w, gray_h = gray.shape[::-1]
         image_points = []
         object_points = []
@@ -23,18 +25,10 @@ class Calibrator:
         
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera([object_points], [image_points], (gray_w, gray_h), None, None)
         if ret:
-            print(mtx)
-            print(dist)
-            print(rvecs)
-            print(tvecs)
             newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (gray_w,gray_h), 1, (gray_w, gray_h))
-            # undistort
-            dst = cv2.undistort(gray, mtx, dist, None, newcameramtx)
-            # crop the image
-            x, y, w, h = roi
-            dst = dst[y:y+h, x:x+w]
-            cv2.imwrite("undistorted.jpg", dst)
-        pass
+            return mtx, newcameramtx, dist 
+        else:
+            raise Exception("Cannot calculate parameters")
     def test(self):
         pass
     def predict(self): 
