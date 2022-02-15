@@ -26,24 +26,29 @@ def parse_args():
 
 def main():
     args = parse_args()
-    print(args)
+    # print(args)
     ccDetector = ChessboardCornerDetector()
-    if args.chessboard_corner_re_detect:
-        ccDetector.detect()
-    if args.train_calibrator:
-        chessboard_mat, gray = ccDetector.detect(args)
-        calibrator = Calibrator(args)
-        mtx, newmtx, dist = calibrator.fit(chessboard_mat, gray)
-        undistort_img = cv2.undistort(gray, mtx, dist, newmtx)
-        demo_path = "{}demo_results/undistorted_chessboard_{}.jpg".format(args.out_dir, time.ctime(time.time()))
-        print(demo_path)
-        cv2.imwrite(demo_path, undistort_img)
-        params = {
-            "mtx": newmtx,
-            "dist": dist
-        }
-        param_path = "{}parameters/{}.pkl".format(args.out_dir, time.ctime(time.time()))
-        pickle.dump(params, open(param_path, "wb"))
+    calibrator = Calibrator(args)
+    
+    chessboard_mat, gray = ccDetector.detect(args)
+    mtx, newmtx, dist = calibrator.fit(chessboard_mat, gray)
+    undistort_img = cv2.undistort(gray, mtx, dist, newmtx)
+    demo_path = "{}demo_results/undistorted_chessboard_{}.jpg".format(args.out_dir, time.ctime(time.time()))
+    
+    print(demo_path)
+    cv2.imwrite(demo_path, undistort_img)
+    ccDetector.detect(demo_path)
+    params = {
+        "newmtx": newmtx,
+        "mtx": mtx,
+        "dist": dist
+    }
+    param_path = "{}parameters/{}.pkl".format(args.out_dir, time.ctime(time.time()))
+    last_param_path = "{}parameters/last.pkl".format(args.out_dir)
+    
+    pickle.dump(params, open(last_param_path, "wb"))
+    pickle.dump(params, open(param_path, "wb"))
+
     print("train complete")
 
 if __name__ == "__main__":

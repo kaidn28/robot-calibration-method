@@ -115,14 +115,17 @@ class ChessboardCornerDetector:
         mat = self.initializeMat(corners, min_x, min_y, max_x, max_y, hoz_avg_ratio, ver_avg_ratio)
         mat = self.refineMat(mat)
         return mat
-    def detect(self, args):
-        self.img_path = args.chessboard_image
+    def detect(self, img_path):
+        self.img_path = img_path
         try: 
             self.img = cv2.imread(self.img_path)
         except:
             raise Exception('Image not found.')
+        if len(self.img.shape) == 3:
+            img_gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+        else: 
+            img_gray = self.img.copy()
 
-        img_gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
         dst = cv2.Canny(img_gray, 50, 200, None, 3)
         # Copy edges to the images that will display the results in BGR
         cdstP = cv2.cvtColor(dst, cv2.COLOR_GRAY2BGR)
@@ -160,12 +163,16 @@ class ChessboardCornerDetector:
                         corners.append(np.array([x,y]))
         #print(corners)
         mat = self.getCornerMat(corners)
-        for i, (x, y) in enumerate(corners):
-            cv2.circle(self.img, (int(x),int(y)), 5, (0,0, 255), -1)
-            #cv2.putText(self.img, str(i), (int(x),int(y)),cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2)
-        cv2.imshow("abc", self.img)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
+        # for i, (x, y) in enumerate(corners):
+        #     cv2.circle(self.img, (int(x),int(y)), 5, (0,0, 255), -1)
+        #     #cv2.putText(self.img, str(i), (int(x),int(y)),cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2)
+        # cv2.imshow("abc", self.img)
+        # cv2.waitKey()
+        # cv2.destroyAllWindows()
+        corner_mat_path = "./out_dir/train/corner_detection/corner_mat_{}.pkl".format(time.ctime(time.time()))
+        last_corner_mat_path = "./out_dir/train/corner_detection/corner_mat_last.pkl"
+        pickle.dump(mat, open(corner_mat_path, "wb"))
+        pickle.dump(mat, open(last_corner_mat_path, "wb"))
         return mat, img_gray
     
 
