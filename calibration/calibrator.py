@@ -1,5 +1,6 @@
 import numpy as np
 import cv2 
+import pickle
 class Calibrator:
     def __init__(self, args):
         pass
@@ -31,5 +32,10 @@ class Calibrator:
             raise Exception("Cannot calculate parameters")
     def test(self):
         pass
-    def predict(self): 
+    def predict(self, center):
+        last_saved_params = "./out_dir/train/calibration/parameters/last.pkl"
+        calib_params = pickle.load(open(last_saved_params, "rb"))
+        print(calib_params) 
         pass
+    def undistort(self, img):
+        calib_params = pickle.load()

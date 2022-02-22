@@ -26,13 +26,14 @@ def run_pipeline(args):
     for n in image_names:
         image_path = os.path.join(args.images, n)
         print(image_path)
-        image = cv2.imread(image_path)
+        image = cv2.imread(image_path) 
         objects = detector.predict(image)
         object_locations = []
         for o in objects:
             calib_loc = calibrator.predict(o.center)
             reg_loc = regressor.predict(calib_loc)
             object_locations.append(reg_loc)
+            
         results.append([n, object_locations])
     return results
 def main():
