@@ -23,20 +23,48 @@ def run_pipeline(args):
     regressor = Regressor(args)
     image_names = os.listdir(args.images)
     results = []
-    for n in image_names:
+    # for n in image_names:
+    #     image_path = os.path.join(args.images, n)
+    #     print(image_path)
+    #     image = cv2.imread(image_path) 
+    #     objects = detector.predict(image)
+    #     object_locations = []
+    #     for o in objects:
+    #         print(o['center'])
+    #         calib_loc = calibrator.predict(o['center'])
+    #         # reg_loc = regressor.predict(calib_loc)
+    #         # object_locations.append(reg_loc)
+    #         print(calib_loc)
+            
+    #     results.append([n, object_locations])
+    # n = image_names[0]
+    # image_path = os.path.join(args.images, n)
+    # print(image_path)
+    # image = cv2.imread(image_path) 
+    # objects = detector.predict(image)
+    # object_locations = []
+    # print("detect first")
+    # for o in objects:
+    #     #print(o['center'])
+    #     calib_loc = calibrator.predict(o['center'])
+    #     # reg_loc = regressor.predict(calib_loc)
+    #     # object_locations.append(reg_loc)
+        
+    #     print(calib_loc)
+    for n in image_names:        
         image_path = os.path.join(args.images, n)
         print(image_path)
         image = cv2.imread(image_path) 
-        objects = detector.predict(image)
-        object_locations = []
+        udt_image = calibrator.undistort(image)
+        objects = detector.predict(udt_image)
+        print("calib first")
         for o in objects:
             print(o['center'])
-            calib_loc = calibrator.predict(o['center'])
-            reg_loc = regressor.predict(calib_loc)
-            object_locations.append(reg_loc)
+            reg_loc= regressor.predict(o['center'])
+            results.append([o["classname"], reg_loc])
             
-        results.append([n, object_locations])
-    return results
+        #print(results)
+        return results
 def main():
     args = parse_args()
     results = run_pipeline(args)

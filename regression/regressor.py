@@ -98,8 +98,11 @@ class Regressor:
                 'c': c,
                 'alpha': alpha
             }
-            self.params_path = "{}/{}_fold{}_mve{}.pkl".format(self.out_dir, time.ctime(time.time()), j+1, np.round(mean_err,2))
-            pickle.dump(params, open(self.params_path, 'wb'))
+            params_path = "{}{}_fold{}_mve{}.pkl".format(self.out_dir, time.ctime(time.time()), j+1, np.round(mean_err,2))
+            last_params_path = "{}last.pkl".format(self.out_dir)
+            pickle.dump(params, open(params_path, 'wb'))
+            pickle.dump(params, open(last_params_path, 'wb'))
+
     
     def predict(self, p):
         assert self.params_path

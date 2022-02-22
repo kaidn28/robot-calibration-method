@@ -3,6 +3,11 @@ import cv2
 import pickle
 class Calibrator:
     def __init__(self, args):
+        last_saved_params = "./out_dir/train/calibration/parameters/last.pkl"
+        try:
+            self.params = pickle.load(open(last_saved_params, "rb"))
+        except:
+            print("params not found, plz train before predict")
         pass
     def fit(self, mat, img):
         # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -33,9 +38,35 @@ class Calibrator:
     def test(self):
         pass
     def predict(self, center):
-        last_saved_params = "./out_dir/train/calibration/parameters/last.pkl"
-        calib_params = pickle.load(open(last_saved_params, "rb"))
-        print(calib_params) 
+        mtx = self.params['mtx']
+        dist = self.params['dist']
+        inv_mtx = np.linalg.inv(mtx)
+        #print("inv_mat")
+        #print(inv_mtx)
+        #print(mtx)
+        #print(dist)
+        u = center[0]
+        v = center[1]
+        x = u*sum(inv_mtx.T[0])
+        y = v*sum(inv_mtx.T[1])
+        #print(x)
+        #print(y)
+        r2 = x*x + y*y
+        k1,k2, p1, p2, k3 = dist[0] 
+        udt_x = x*(1+k1*r2+k2*r2**2+k3*r2**3) + 2*p1*x*y +p2*(r2+ 2*x**2)
+        udt_y = y*(1+k1*r2+k2*r2**2+k3*r2**3) + p1*(r2+2*y**2)+2*p2*x*y
+        udt_u = udt_x*sum(mtx.T[0])
+        udt_v = udt_y*sum(mtx.T[1])
+        return [udt_u, udt_v] 
+        #print(self.params)
+        return center
+        # print(calib_params) 
         pass
     def undistort(self, img):
-        calib_params = pickle.load()
+        print(self.params)
+        mtx =self.params['mtx']
+        dist = self.params['dist']
+        #print(dist)
+        udt_img = cv2.undistort(img, mtx, dist, mtx)
+        return udt_img
+        #print(self.params)

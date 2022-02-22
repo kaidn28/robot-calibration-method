@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument('--train_regressor', type=bool, default=True)
     parser.add_argument('--data', type =str, default='./datasets/coordinates/dataset_29072021.csv')
     parser.add_argument('--object_images', type=str, help='path to images', default= './datasets/images/dataset_29072021/')
-    parser.add_argument('--out_dir', type=str, default="./out_dir")
+    parser.add_argument('--out_dir', type=str, default="./out_dir/train/regressor/parameters/")
     args = parser.parse_args()
     return args
 
