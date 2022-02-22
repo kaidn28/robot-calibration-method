@@ -18,7 +18,7 @@ def parse_args():
     return args
 
 def run_pipeline(args):
-    detector = ObjectDetector(args)
+    detector = ObjectDetector()
     calibrator = Calibrator(args)
     regressor = Regressor(args)
     image_names = os.listdir(args.images)
@@ -30,7 +30,8 @@ def run_pipeline(args):
         objects = detector.predict(image)
         object_locations = []
         for o in objects:
-            calib_loc = calibrator.predict(o.center)
+            print(o['center'])
+            calib_loc = calibrator.predict(o['center'])
             reg_loc = regressor.predict(calib_loc)
             object_locations.append(reg_loc)
         results.append([n, object_locations])
