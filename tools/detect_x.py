@@ -5,4 +5,7 @@ import cv2
 from object_detection import ObjectDetector
 
 a = ObjectDetector("./out_dir/train/detection/center.pt")
-print(a.predict(cv2.imread('./datasets/object_images/dataset_29072021/img_4.jpg')))
+# print(a.predict(cv2.imread('./datasets/object_images/dataset_29072021/img_4.jpg')))
+img = cv2.imread('./datasets/object_images/dataset_29072021/img_4.jpg')
+res = a.predict(img)
+print(res[res["name"]=="x"])
