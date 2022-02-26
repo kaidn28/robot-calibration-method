@@ -32,7 +32,7 @@ class Calibrator:
             "mtx": mtx,
             "dist": dist
         }
-        origin = self.orDetetector.detect(undistort_img)
+        origin = self.orDetetector.predict(undistort_img)
 
 
         #params in chessboard detector
@@ -44,8 +44,8 @@ class Calibrator:
         last_correction_param_path = "{}image_correction/parameters/last.pkl".format(args.out_dir)
         
         #params in origin detection
-        origin_path = "{}origin_detection/{}.pkl".format(args.out_dir, time.ctime(time.time()))
-        last_origin_path = "{}origin_detection/last.pkl".format(args.out_dir)
+        origin_path = "{}origin_detection/origin/{}.pkl".format(args.out_dir, time.ctime(time.time()))
+        last_origin_path = "{}origin_detection/origin/last.pkl".format(args.out_dir)
         
         pickle.dump(chessboard_mat, open(corner_mat_path, "wb"))
         pickle.dump(chessboard_mat, open(last_corner_mat_path, "wb"))
