@@ -1,1 +1,1 @@
-from detector import OriginDetector
+from .detector import OriginDetector

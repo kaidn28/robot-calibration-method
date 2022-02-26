@@ -115,12 +115,8 @@ class ChessboardCornerDetector:
         mat = self.initializeMat(corners, min_x, min_y, max_x, max_y, hoz_avg_ratio, ver_avg_ratio)
         mat = self.refineMat(mat)
         return mat
-    def detect(self, img_path):
-        self.img_path = img_path
-        try: 
-            self.img = cv2.imread(self.img_path)
-        except:
-            raise Exception('Image not found.')
+    def detect(self, img):
+        self.img = img
         if len(self.img.shape) == 3:
             img_gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
         else: 
@@ -169,8 +165,8 @@ class ChessboardCornerDetector:
         # cv2.imshow("abc", self.img)
         # cv2.waitKey()
         # cv2.destroyAllWindows()
-        corner_mat_path = "./out_dir/train/corner_detection/corner_mat_{}.pkl".format(time.ctime(time.time()))
-        last_corner_mat_path = "./out_dir/train/corner_detection/corner_mat_last.pkl"
+        corner_mat_path = "./out_dir/train/calibration/corner_detection/corner_mat_{}.pkl".format(time.ctime(time.time()))
+        last_corner_mat_path = "./out_dir/train/calibration/corner_detection/corner_mat_last.pkl"
         pickle.dump(mat, open(corner_mat_path, "wb"))
         pickle.dump(mat, open(last_corner_mat_path, "wb"))
         return mat, img_gray

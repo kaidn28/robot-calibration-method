@@ -2,7 +2,7 @@ import numpy as np
 import cv2 
 import pickle
 class ImageCorrector:
-    def __init__(self, args):
+    def __init__(self):
         last_saved_params = "./out_dir/train/calibration/image_correction/parameters/last.pkl"
         try:
             self.params = pickle.load(open(last_saved_params, "rb"))

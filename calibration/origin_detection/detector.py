@@ -18,3 +18,5 @@ class OriginDetector:
         org = res[res["name"]=="x"]
         # print(org.xcenter[0])
         return numpy.array([org.xcenter[0], org.ycenter[0]])
+    def test(self, args):
+        pass
