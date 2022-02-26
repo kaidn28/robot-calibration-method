@@ -7,7 +7,7 @@ import argparse
 import pandas as pd
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../'))
 from regression import Regressor
-from calibration import Calibrator
+from calibration import *
 from object_detection import ObjectDetector
 def parse_args():
     parser =argparse.ArgumentParser(description="Testing pipeline")
