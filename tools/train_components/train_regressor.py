@@ -22,8 +22,8 @@ def main():
     args = parse_args()
     print(args)
     if args.train_regressor:
-        regressor = Regressor(args)
-        regressor.fit()
+        regressor = Regressor()
+        regressor.fit(args)
     print("train complete")
 
 if __name__ == "__main__":

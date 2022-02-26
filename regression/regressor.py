@@ -9,7 +9,10 @@ from .functions import *
 from sklearn.model_selection import train_test_split
 
 class Regressor:
-    def __init__(self, args):
+    def __init__(self):
+        self.last_params = "./out_dir/train/regressor/parameters/last.pkl"
+    
+    def fit(self, args, lr = 0.1, max_iteration = 1000, print_after= 20, num_folds = 4):
         self.out_dir = args.out_dir 
         if hasattr(args, "data"):
             self.data = pd.read_csv(args.data).loc[:, ['x', 'y', 'x_gt', 'y_gt']]
@@ -30,8 +33,6 @@ class Regressor:
             # print(self.data)
             self.drawingBoard = drawingBoard
             print(self.data)
-    
-    def fit(self, lr = 0.1, max_iteration = 1000, print_after= 20, num_folds = 4):
         data_proc = self.data.sample(frac=1).to_numpy()
         P_proc = data_proc[:, :2]
         A_proc = data_proc[:, 2:]
@@ -98,15 +99,14 @@ class Regressor:
                 'c': c,
                 'alpha': alpha
             }
-            params_path = "{}{}_fold{}_mve{}.pkl".format(self.out_dir, time.ctime(time.time()), j+1, np.round(mean_err,2))
+            # params_path = "{}{}_fold{}_mve{}.pkl".format(self.out_dir, time.ctime(time.time()), j+1, np.round(mean_err,2))
             last_params_path = "{}last.pkl".format(self.out_dir)
-            pickle.dump(params, open(params_path, 'wb'))
+            # pickle.dump(params, open(params_path, 'wb'))
             pickle.dump(params, open(last_params_path, 'wb'))
 
     
     def predict(self, p):
-        assert self.params_path
-        params = pickle.load(open(self.params_path))
+        params = pickle.load(open(self.last_params, "rb"))
         c = params['c']
         alpha = params['alpha']
         a = p + (c-p)/alpha
