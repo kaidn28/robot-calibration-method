@@ -9,7 +9,6 @@ import pandas as pd
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../'))
 
 from regression import Regressor
-from chessboard_corner_detection import ChessboardCornerDetector
 from object_detection import ObjectDetector
 from calibration import Calibrator
 def parse_args():
@@ -44,9 +43,6 @@ def parse_args():
 def main():
     args = parse_args()
     print(args)
-    if args.chessboard_corner_re_detect:
-        ccDetector = ChessboardCornerDetector(args)
-        ccDetector.detect()
     if args.train_object_detector:
         obDetector = ObjectDetector(args)
         obDetector.fit()
