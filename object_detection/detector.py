@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 from .functions import *
 
 class ObjectDetector:
@@ -10,9 +11,9 @@ class ObjectDetector:
         pass
     def predict(self, image):
         x = yolo(image, self.weight)
-        object = []
+        objects = []
         for i in range(len(x)):
-            object.append({"class_name": x.name[i], "center": [x.xcenter[i], x.ycenter[i]]})
-        return x
+            objects.append({"class_name": x.name[i], "center": np.array([x.xcenter[i], x.ycenter[i]])})
+        return objects
 # a = ObjectDetector()
 # print(a.predict(cv2.imread('../datasets/object_images/dataset_29072021/img_1.jpg')))

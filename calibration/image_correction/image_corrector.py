@@ -11,8 +11,7 @@ class ImageCorrector:
         pass
     def fit(self, mat, img):
         # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        gray = img
-        gray_w, gray_h = gray.shape[::-1]
+        img_shape = img.shape[::2]
         image_points = []
         object_points = []
         print(mat.shape)
@@ -29,9 +28,9 @@ class ImageCorrector:
         object_points = np.array(object_points)
 
         
-        ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera([object_points], [image_points], (gray_w, gray_h), None, None)
+        ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera([object_points], [image_points], img_shape, None, None)
         if ret:
-            newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (gray_w,gray_h), 1, (gray_w, gray_h))
+            newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, img_shape, 1, img_shape)
             return mtx, newcameramtx, dist 
         else:
             raise Exception("Cannot calculate parameters")

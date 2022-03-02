@@ -8,15 +8,15 @@ import numpy
 
 class OriginDetector:
     def __init__ (self):
-        self.oDetector = ObjectDetector("./out_dir/train/detection/center.pt")
+        self.oDetector = ObjectDetector("./out_dir/parameters/calibration/origin_detection/center.pt")
     
     def fit(self, args):
         pass
 
     def predict(self, img):    
         res = self.oDetector.predict(img)
-        org = res[res["name"]=="x"]
+        #print(res)
         # print(org.xcenter[0])
-        return numpy.array([org.xcenter[0], org.ycenter[0]])
+        return res[0]['center']
     def test(self, args):
         pass

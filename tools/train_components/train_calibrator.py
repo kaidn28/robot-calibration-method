@@ -18,20 +18,23 @@ def parse_args():
     #image correction and params
     parser.add_argument('--train_image_correction', type=bool, default= False)
     parser.add_argument('--corners', type=str, default="/")
-    parser.add_argument('--out_dir', type=str, default="./out_dir/train/calibration/")
-    args = parser.parse_args()
+    parser.add_argument('--out_dir', type=str, default="./out_dir/")
+    
     #origin detection
     parser.add_argument('--train_origin_detection', type=bool, default= False)
     
-
+    #mode 
+    parser.add_argument('--mode', type=str, default="train")
+    args = parser.parse_args()
     
     return args
 
 def main():
     args = parse_args()
     # print(args)
-    calibrator = Calibrator()
-    calibrator.fit(args)
+    calibrator = Calibrator(args)
+    img = cv2.imread(args.chessboard_image)
+    calibrator.fit(img)
 
     
 

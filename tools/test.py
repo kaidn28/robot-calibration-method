@@ -13,12 +13,14 @@ def parse_args():
     parser =argparse.ArgumentParser(description="Testing pipeline")
     parser.add_argument('--images', type=str, help='path to images', default= './datasets/object_images/dataset_29072021/')
     parser.add_argument('--origin', nargs="+", help='coordinates of origin point by(x,y)', default=['583','30'])
-    parser.add_argument('--out_dir', type=str, default="./out_dir")
+    parser.add_argument('--out_dir', type=str, default="./out_dir/")
+    parser.add_argument('--object_detection_weight', type = str, help="path to object detection model params", default='./out_dir/parameters/object_detection/super-best.pt')
+    parser.add_argument('--mode', type = str, default = "test")
     args = parser.parse_args()
     return args
 
 def run_pipeline(args):
-    detector = ObjectDetector()
+    detector = ObjectDetector(args.object_detection_weight)
     calibrator = Calibrator(args)
     regressor = Regressor()
     image_names = os.listdir(args.images)
@@ -53,15 +55,21 @@ def run_pipeline(args):
     #     print(calib_loc)
     for n in image_names:        
         image_path = os.path.join(args.images, n)
-        print(image_path)
+        print(n)
         image = cv2.imread(image_path) 
         udt_image = calibrator.undistort(image)
         objects = detector.predict(udt_image)
-        print("calib first")
+        #print("calib first")
+        #print(type(objects))
         for o in objects:
-            print(o['center'])
-            reg_loc= regressor.predict(o['center'])
+            #print(o['center'])
+            
+            cab_loc = calibrator.transform(o['center'])
+            #print(o['center'])
+            print(cab_loc)
+            reg_loc= regressor.predict(cab_loc)
             results.append([o["class_name"], reg_loc])
+
             
         #print(results)
         return results
