@@ -26,11 +26,11 @@ class Calibrator:
         self.image_correction_demo_path = demo_dir + 'image_correction/'
         self.origin_detection_demo_path = demo_dir + 'origin_detection/'
 
-        if args.mode == "test":
+        if args.calibration_mode == "test":
             self.chessboard_mat = pickle.load(open(self.chessboard_detection_params_path + "last.pkl", "rb"))
             self.correction_params = pickle.load(open(self.image_correction_params_path + "last.pkl", "rb"))
             self.transformation_params = pickle.load(open(self.origin_detection_params_path + "last.pt", "rb"))
-        elif args.mode == "train":
+        elif args.calibration_mode == "train":
             self.cell_length = args.cell_length
     def fit(self, img):
 
@@ -96,8 +96,8 @@ class Calibrator:
     def transform(self, point):
         object_loc = point 
         origin_loc = self.transformation_params['origin']
-        print(object_loc)
-        print(origin_loc)
+        #print(object_loc)
+        #print(origin_loc)
         cell_length = self.transformation_params['cell_length']
         ratios = self.transformation_params['ratios']
         return np.multiply(object_loc - origin_loc, 1/ratios)*cell_length

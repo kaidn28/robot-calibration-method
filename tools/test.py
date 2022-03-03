@@ -15,7 +15,9 @@ def parse_args():
     parser.add_argument('--origin', nargs="+", help='coordinates of origin point by(x,y)', default=['583','30'])
     parser.add_argument('--out_dir', type=str, default="./out_dir/")
     parser.add_argument('--object_detection_weight', type = str, help="path to object detection model params", default='./out_dir/parameters/object_detection/super-best.pt')
-    parser.add_argument('--mode', type = str, default = "test")
+    parser.add_argument('--calibration_mode', type = str, default = "test")
+    parser.add_argument('--object_detection_mode', type = str, default = "test")
+    parser.add_argument('--regression_mode', type = str, default="test")
     args = parser.parse_args()
     return args
 

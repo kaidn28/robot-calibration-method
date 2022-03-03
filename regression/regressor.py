@@ -9,35 +9,13 @@ from .functions import *
 from sklearn.model_selection import train_test_split
 
 class Regressor:
-    def __init__(self):
-        self.last_params = "./out_dir/train/regressor/parameters/last.pkl"
+    def __init__(self, args):
+        self.out_dir = args.out_dir
+        self.params_path = args.out_dir + 'parameters/regressor/'
     
-    def fit(self, args, lr = 0.1, max_iteration = 1000, print_after= 20, num_folds = 4):
-        self.out_dir = args.out_dir 
-        if hasattr(args, "data"):
-            self.data = pd.read_csv(args.data).loc[:, ['x', 'y', 'x_gt', 'y_gt']]
-            self.data.info()
-            drawingBoard = np.zeros((700, 700)) + 255
-            drawingBoard = cv2.merge([drawingBoard, drawingBoard, drawingBoard])
-            data_draw = self.data.applymap(lambda x: int(x)*10 + 300).to_numpy()
-            # print(data_draw)
-            for x1, y1, x2, y2 in data_draw:
-                cv2.line(drawingBoard, (x1,y1), (x2,y2), (0, 255, 0), 2)
-                cv2.circle(drawingBoard, (x1,y1), 2, (0,0,255), -1)
-                cv2.circle(drawingBoard, (x2,y2), 2, (255,0,0), -1)
-            #cv2.imshow('abc', drawingBoard)
-            
-            # cv2.waitKey()
-            # cv2.destroyAllWindows()
-            # cv2.imwrite('visualize.jpg', drawingBoard)
-            # print(self.data)
-            self.drawingBoard = drawingBoard
-            print(self.data)
-        data_proc = self.data.sample(frac=1).to_numpy()
-        P_proc = data_proc[:, :2]
-        A_proc = data_proc[:, 2:]
-        #print(data_proc.shape)
-        folds = foldSplit(data_proc, num_folds)
+    def fit(self, P, A, lr = 0.1, max_iteration = 1000, print_after= 20, num_folds = 4): 
+         
+        folds = foldSplit(P, A, num_folds)
         for j in range(num_folds):
             print("_________Fold {}: __________".format(j+1))
             P_train, P_val, A_train, A_val = ithFoldTrainTestSplit(folds, j)
@@ -91,8 +69,8 @@ class Regressor:
             print("valid time avg: ", (t_valid_end - t_valid_start)*200)
             dis = []
             err = []
-            for i, p in enumerate(P_proc):        
-                a = A_proc[i]
+            for i, p in enumerate(P):        
+                a = A[i]
                 dis.append(np.linalg.norm(c - a)*10)
                 err.append(np.linalg.norm(p - a)*10)
             params = {
@@ -102,7 +80,7 @@ class Regressor:
             # params_path = "{}{}_fold{}_mve{}.pkl".format(self.out_dir, time.ctime(time.time()), j+1, np.round(mean_err,2))
             last_params_path = "{}last.pkl".format(self.out_dir)
             # pickle.dump(params, open(params_path, 'wb'))
-            pickle.dump(params, open(last_params_path, 'wb'))
+            #pickle.dump(params, open(last_params_path, 'wb'))
 
     
     def predict(self, p):

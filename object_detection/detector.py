@@ -3,7 +3,7 @@ import numpy as np
 from .functions import *
 
 class ObjectDetector:
-    def __init__(self, weight):
+    def __init__(self, weight = "./out_dir/parameters/object_detection/super-best.pt"):
         self.weight = weight
     def train(self):
         pass
