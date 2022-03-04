@@ -1,1 +1,1 @@
-from .regressor import Regressor
+from .regressor import Regressor, MultiRegressor

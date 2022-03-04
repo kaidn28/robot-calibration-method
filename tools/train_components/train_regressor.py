@@ -8,7 +8,7 @@ import pandas as pd
 import torch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../'))
 
-from regression import Regressor, regressor
+from regression import MultiRegressor
 from calibration import Calibrator
 from object_detection import ObjectDetector
 
@@ -30,15 +30,15 @@ def parse_args():
 def main():
     
     args = parse_args()
-    print(args)
+    # print(args)
     
     calibrator = Calibrator(args)
     object_detector = ObjectDetector()
-    regressor = Regressor(args)
+    
 
 
     gt_df = pd.read_csv(args.gt, index_col=0)
-    print(gt_df)
+    # print(gt_df)
     img_names = os.listdir(args.object_images)
     
     cab_locs = dict()
@@ -46,9 +46,10 @@ def main():
     for n in img_names:
         img_path = os.path.join(args.object_images, n)
         img = cv2.imread(img_path)
+        img_center = calibrator.transform((img.shape[1]/2, img.shape[0]/2))
         udt_img = calibrator.undistort(img)
         objects = object_detector.predict(udt_img)
-        print(n)
+        # print(n)
         for o in objects:
             cab_loc = calibrator.transform(o['center'])
             #print(o['class_name'])
@@ -63,10 +64,14 @@ def main():
             if not o['class_name'] in gt_locs.keys():
                 gt_locs[o['class_name']] = np.empty((0,2))
             gt_locs[o['class_name']] = np.concatenate((gt_locs[o['class_name']], gt_loc.reshape(1,2)))
-    print(cab_locs['red'].shape)
-    print(gt_locs['red'].shape)
 
-    regressor.fit(cab_locs, gt_locs)
+
+
+    # print(cab_locs['red'].shape)
+    # print(gt_locs['red'].shape)
+
+    regressor = MultiRegressor(args, cab_locs.keys())
+    regressor.fit(cab_locs, gt_locs, img_center)
 
 
 
