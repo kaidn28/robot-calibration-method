@@ -24,7 +24,7 @@ def parse_args():
     parser.add_argument('--train_origin_detection', type=bool, default= False)
     
     #mode 
-    parser.add_argument('--mode', type=str, default="train")
+    parser.add_argument('--calibration_mode', type=str, default="train")
     args = parser.parse_args()
     
     return args

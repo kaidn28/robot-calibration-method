@@ -70,7 +70,7 @@ def main():
     # print(cab_locs['red'].shape)
     # print(gt_locs['red'].shape)
 
-    regressor = MultiRegressor(args, cab_locs.keys())
+    regressor = MultiRegressor(args)
     regressor.fit(cab_locs, gt_locs, img_center)
 
 

@@ -69,13 +69,12 @@ def run_pipeline(args):
             
             cab_loc = calibrator.transform(o['center'])
             #print(o['center'])
-            print(cab_loc)
+            #print(cab_loc)
             reg_loc= regressor.predict(o['class_name'], cab_loc)
             results.append([o["class_name"], reg_loc])
 
             
         #print(results)
-        return results
 def main():
     args = parse_args()
     results = run_pipeline(args)

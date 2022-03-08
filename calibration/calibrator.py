@@ -1,6 +1,7 @@
 from .chessboard_corner_detection import ChessboardCornerDetector
 from .image_correction import ImageCorrector
 from .origin_detection import OriginDetector
+from .interpolation import Interpolator
 import cv2
 import numpy as np
 import pickle
@@ -10,6 +11,7 @@ class Calibrator:
         self.ccDetector = ChessboardCornerDetector()
         self.imCorrector = ImageCorrector()
         self.orDetector = OriginDetector()
+        self.interpolator = Interpolator()
         
         out_dir = args.out_dir
         params_dir = out_dir + 'parameters/calibration/'
@@ -34,13 +36,13 @@ class Calibrator:
             self.cell_length = args.cell_length
     def fit(self, img):
 
-        chessboard_mat, img_scale_ratios = self.ccDetector.detect(img)
+        chessboard_mat, img_cell_lengths = self.ccDetector.detect(img)
 
         mtx, newmtx, dist = self.imCorrector.fit(chessboard_mat, img)
         undistort_img = cv2.undistort(img, mtx, dist, newmtx)
     
         #re-detect after distortion
-        chessboard_mat, img_scale_ratios = self.ccDetector.detect(undistort_img)
+        chessboard_mat, img_cell_lengths = self.ccDetector.detect(undistort_img)
         correction_params = {
             "newmtx": newmtx,
             "mtx": mtx,
@@ -51,7 +53,7 @@ class Calibrator:
         transformation_params = {
             "origin": origin,
             "cell_length": self.cell_length,
-            "ratios": img_scale_ratios
+            "img_cell_lengths": img_cell_lengths
         }
 
 
@@ -96,11 +98,14 @@ class Calibrator:
     def transform(self, point):
         object_loc = point 
         origin_loc = self.transformation_params['origin']
+        corner_mat = self.chessboard_mat
         #print(object_loc)
         #print(origin_loc)
         cell_length = self.transformation_params['cell_length']
-        ratios = self.transformation_params['ratios']
-        return np.multiply(object_loc - origin_loc, 1/ratios)*cell_length
-        
+        img_cell_lengths = self.transformation_params['img_cell_lengths']
+        #print(f"ratios: {img_cell_lengths}")
+        int_loc = self.interpolator.predict(object_loc, origin_loc, img_cell_lengths, cell_length, corner_mat)
+        return int_loc
+
     def test(self, args):
         pass

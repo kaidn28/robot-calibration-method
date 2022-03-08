@@ -106,8 +106,8 @@ class Regressor:
         return self
 
     def predict(self, p):
-        print(self.c)
-        print(self.alpha)
+        # print(self.c)
+        # print(self.alpha)
         a = p + (self.c-p)/self.alpha
         return a
 
