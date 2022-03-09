@@ -19,20 +19,20 @@ class Regressor:
             self.c = np.random.rand(2)
         self.alpha = 0
         self.beta = 0
-    def fit(self, Ps, As, lr = 0.1, max_iteration = 50, print_after= 50, valid_size = 0.25): 
-        #print(Ps)
-        #print(As)
+    def fit(self, Ps, As, lr = 0.1, max_iteration = 100, print_after= 1, valid_size = 0.25): 
+        # print("P: ", Ps)
+        # print("A: ", As)
         P_train, P_val, A_train, A_val = train_test_split(Ps, As, test_size = valid_size, random_state=43)
         t_train_start = time.time()
-        print("P_train: ", P_train)
-        print("A_train: ", A_train)
+        #print("P_train: \n", P_train)
+        #print("A_train: \n", A_train)
         c = self.c
         alpha = self.alpha
         beta = self.beta
         print("____ training ______: ")
         for iter in range(max_iteration):
             alpha = self.calculateParams(c, P_train, A_train)
-            print(alpha)
+            # print(alpha)
             g = self.grad(c, alpha, P_train, A_train)
             if np.linalg.norm(g) < 1e-4:
                 break

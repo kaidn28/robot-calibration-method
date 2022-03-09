@@ -50,20 +50,28 @@ def main():
         udt_img = calibrator.undistort(img)
         objects = object_detector.predict(udt_img)
         # print(n)
+        # print(n)
         for o in objects:
-            cab_loc = calibrator.transform(o['center'])
-            #print(o['class_name'])
-            #print(cab_loc)    
-            gt_loc = gt_df.loc[n, ["{}_x".format(o['class_name']), "{}_y".format(o['class_name'])]].to_numpy()
-            #print(gt_loc)
+            if o['class_name'] == 'red':
+                # print('initial loc: ', o['center'])  
+                cab_loc, scaling_loc = calibrator.transform(o['center'])
+                #print(o['class_name'])
+                # print("calibration loc: ", cab_loc) 
+                # print("scaling_loc: ", scaling_loc)
+                gt_loc = gt_df.loc[n, ["{}_x".format(o['class_name']), "{}_y".format(o['class_name'])]].to_numpy()
+                #print(gt_loc)
+                # print("ground truth: ", gt_loc)
+                # print("error: ", np.linalg.norm(gt_loc - cab_loc))
+                # print("scaling error: ", np.linalg.norm(gt_loc - scaling_loc))
+                if not o['class_name'] in cab_locs.keys():
+                    cab_locs[o['class_name']] = np.empty((0,2))
+                cab_locs[o['class_name']] = np.concatenate((cab_locs[o['class_name']], cab_loc.reshape(1,2)))
 
-            if not o['class_name'] in cab_locs.keys():
-                cab_locs[o['class_name']] = np.empty((0,2))
-            cab_locs[o['class_name']] = np.concatenate((cab_locs[o['class_name']], cab_loc.reshape(1,2)))
-
-            if not o['class_name'] in gt_locs.keys():
-                gt_locs[o['class_name']] = np.empty((0,2))
-            gt_locs[o['class_name']] = np.concatenate((gt_locs[o['class_name']], gt_loc.reshape(1,2)))
+                if not o['class_name'] in gt_locs.keys():
+                    gt_locs[o['class_name']] = np.empty((0,2))
+                gt_locs[o['class_name']] = np.concatenate((gt_locs[o['class_name']], gt_loc.reshape(1,2)))
+            else:
+                continue
 
 
 
