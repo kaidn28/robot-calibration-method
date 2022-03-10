@@ -19,7 +19,7 @@ class Regressor:
             self.c = np.random.rand(2)
         self.alpha = 0
         self.beta = 0
-    def fit(self, Ps, As, lr = 0.1, max_iteration = 10000, print_after= 1, valid_size = 0.25): 
+    def fit(self, Ps, As, lr = 1, max_iteration = 1000, print_after= 1, valid_size = 0.75): 
         # print("P: ", Ps)
         # print("A: ", As)
         P_train, P_val, A_train, A_val = train_test_split(Ps, As, test_size = valid_size, random_state=43)
