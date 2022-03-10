@@ -48,7 +48,7 @@ def main():
     for n in img_names:
         img_path = os.path.join(args.object_images, n)
         img = cv2.imread(img_path)
-        img_center, _ , _, _ = calibrator.transform((img.shape[1]/2, img.shape[0]/2))
+        _, img_center = calibrator.transform((img.shape[1]/2, img.shape[0]/2))
         udt_img = calibrator.undistort(img)
         objects = object_detector.predict(udt_img)
         # print(n)
@@ -56,7 +56,7 @@ def main():
         for o in objects:
             if o['class_name'] == 'red':
                 # print('initial loc: ', o['center'])  
-                cab_loc, scaling_loc, ne_co, ne_cor_real = calibrator.transform(o['center'])
+                cab_loc, scaling_loc = calibrator.transform(o['center'])
                 gt_loc = gt_df.loc[n, ["{}_x".format(o['class_name']), "{}_y".format(o['class_name'])]].to_numpy()
                 cab_loc = np.round(cab_loc,2)
                 scaling_loc = np.round(scaling_loc, 2)

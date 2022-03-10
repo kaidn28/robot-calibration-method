@@ -22,5 +22,5 @@ class Interpolator:
             # print(nearest_corners_real)
             int_loc = interpolate_bilinear(point, nearest_corners, nearest_corners_real)
             # print(int_loc)
-        return int_loc, np.multiply(point - origin, 1/img_cell_lengths)*cell_length, nearest_corners, nearest_corners_real
+        return int_loc, np.multiply(point - origin, 1/img_cell_lengths)*cell_length
         
