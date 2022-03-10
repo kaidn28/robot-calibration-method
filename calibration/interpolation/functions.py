@@ -79,6 +79,7 @@ def interpolate_bilinear(p, nc, nc_real):
     x, y = p
     lt, rt, lb, rb = nc
     real_lt, real_rt, real_lb, real_rb = nc_real
+    
     top_frac = (x- lt[0])/(rt[0]-lt[0])
     bot_frac = (x - lb[0])/(rb[0]-lb[0])
     top = (x, lt[1] + top_frac*(rt[1] - lt[1]))
