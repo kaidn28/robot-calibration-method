@@ -6,27 +6,18 @@ from detectron2.config import get_cfg
 from imantics import Polygons, Mask
 import os
 
-class ObjectDetector:
-    def __init__(self, cfg, weight = "./out_dir/parameters/object_detection/super-best.pt"):
-        self.weight = weight
-        self.model = yolo(self.weight)
+
+class ObjectSegment:
+    def __init__(self, cfg):
         self.cfg = cfg
 
     def train(self):
         pass
+
     def test(self):
         pass
-    def predict(self, image):
-        
-        img = image[..., ::-1]
-        results = self.model(img)
-        a = results.pandas().xywh[0]
-        objects = []
-        for i in range(len(a)):
-            objects.append({"class_name": a.name[i], "center": np.array([a.xcenter[i], a.ycenter[i]])})
-        return objects
 
-    def maskRCNN(self, img):
+    def predict(self, img):
         predictor = DefaultPredictor(self.cfg)
 
         outputs = predictor(img)
@@ -46,6 +37,3 @@ class ObjectDetector:
 
         return o 
 # a = ObjectDetector()
-    
-# a = ObjectDetector()
-# print(a.predict(cv2.imread('../datasets/object_images/dataset_29072021/img_1.jpg')))
