@@ -10,6 +10,7 @@ import os
 class ObjectSegment:
     def __init__(self, cfg):
         self.cfg = cfg
+        predictor = DefaultPredictor(self.cfg)
 
     def train(self):
         pass
@@ -18,9 +19,7 @@ class ObjectSegment:
         pass
 
     def predict(self, img):
-        predictor = DefaultPredictor(self.cfg)
-
-        outputs = predictor(img)
+        outputs = self.predictor(img)
         # print(outputs['instances'].pred_masks[0])
         masks = outputs['instances'].pred_masks
         masks = masks.int()

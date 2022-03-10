@@ -15,6 +15,7 @@ class OriginDetector:
 
     def predict(self, img):    
         res = self.oDetector.predict(img)
+        print(res)
         #print(res)
         # print(org.xcenter[0])
         return res[0]['center']

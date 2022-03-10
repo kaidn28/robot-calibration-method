@@ -5,6 +5,7 @@ import os
 import sys
 import argparse
 import pandas as pd
+from object_detection.segment import ObjectSegment
 import torch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../'))
 
@@ -33,7 +34,7 @@ def main():
     # print(args)
     
     calibrator = Calibrator(args)
-    object_detector = ObjectDetector()
+    object_detector = ObjectSegment()
     
 
 
@@ -55,6 +56,7 @@ def main():
         # print(n)
         for o in objects:
             if o['class_name'] == 'red':
+                print(o)
                 # print('initial loc: ', o['center'])  
                 cab_loc, scaling_loc = calibrator.transform(o['center'])
                 gt_loc = gt_df.loc[n, ["{}_x".format(o['class_name']), "{}_y".format(o['class_name'])]].to_numpy()

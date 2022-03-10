@@ -62,8 +62,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../'))
 from object_detection import segment
 from object_detection.functions import cfg
 
-cfg = cfg()
-a = segment.ObjectSegment(cfg)
+config = cfg()
+a = segment.ObjectSegment(config)
 img = cv2.imread("./datasets/object_images/dataset_03092022/12.jpg")
 
 res = a.predict(img)

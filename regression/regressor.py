@@ -24,6 +24,7 @@ class Regressor:
         # print("A: ", As)
         P_train, P_val, A_train, A_val = train_test_split(Ps, As, test_size = valid_size, random_state=43)
         t_train_start = time.time()
+        # c_test, alpha_test = self.calParams(P_train, A_train)
         #print("P_train: \n", P_train)
         #print("A_train: \n", A_train)
         c = self.c
@@ -58,7 +59,8 @@ class Regressor:
         t_valid_start = time.time()
         for i, p in enumerate(P_val):
             a = A_val[i]
-            reg_a = p + (c-p)/alpha
+            # reg_a = p + (c-p)/alpha
+            reg_a = p + (c - p)/alpha
             print('original: ', p)
             print('regression result: ', reg_a)
             print('original error: ', np.linalg.norm(p-a))
@@ -136,6 +138,28 @@ class Regressor:
         # print(alpha_sum)
         alpha =  alpha_sum/len(X)
         return alpha 
+    # def calParams(self, A, P):
+    #     # C = alpha.M + N
+    #     # Pt.C = alpha.t + s
+    #     # alpha.t + s = alpha.Pt.M + Pt.N
+    #     # alpha = (Pt.N-s)/(t-Pt.M)
+    #     # C = alpha.M + N
+    #     n = A.shape[0]
+    #     M = np.sum(A-P, axis=0).T/n
+    #     print(M)
+    #     N = np.sum(P, axis=0).T/n
+    #     print(N)
+    #     Pt = np.sum(A, axis=0)
+    #     print(Pt)
+    #     t = np.sum([Ai.dot(Ai.T - P[i].T) for i, Ai in enumerate(A)])
+    #     print(t)
+    #     s = np.sum([Ai.dot(P[i].T) for i, Ai in enumerate(A)])
+    #     print(s)
+    #     alpha = (Pt.dot(N)-s)/(t-Pt.dot(M))
+    #     print(alpha)
+    #     C = alpha*M + N
+    #     print(C)
+    #     return C, alpha
     def calculateLoss(self, k, q, X, Y):
         loss = 0
         for i, x in enumerate(X):

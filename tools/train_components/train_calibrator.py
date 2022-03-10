@@ -13,7 +13,7 @@ def parse_args():
     parser =argparse.ArgumentParser(description="train calibration and regression")
     #chessboard corner detection and params
     parser.add_argument('--chessboard_corner_re_detect', type=bool, default=False)
-    parser.add_argument('--chessboard_image', type=str, help = 'path to chessboard image to corner detection', default='./datasets/chessboard_images/dataset_29072021.jpg')
+    parser.add_argument('--chessboard_image', type=str, help = 'path to chessboard image to corner detection', default='./datasets/chessboard_images/dataset_050322.png')
     parser.add_argument('--cell_length', help= 'edge of a cell of the chessboard in cm', type=int, default = 3)
     #image correction and params
     parser.add_argument('--train_image_correction', type=bool, default= False)

@@ -5,12 +5,14 @@ from detectron2.engine import DefaultTrainer, DefaultPredictor
 from detectron2.config import get_cfg
 from imantics import Polygons, Mask
 import os
-
 class ObjectDetector:
-    def __init__(self, cfg, weight = "./out_dir/parameters/object_detection/super-best.pt"):
+    def __init__(self, config = None, weight = "./out_dir/parameters/object_detection/super-best.pt"):
         self.weight = weight
         self.model = yolo(self.weight)
-        self.cfg = cfg
+        self.config = config
+        if cfg is None:
+            self.config = cfg()
+        
 
     def train(self):
         pass
@@ -27,7 +29,7 @@ class ObjectDetector:
         return objects
 
     def maskRCNN(self, img):
-        predictor = DefaultPredictor(self.cfg)
+        predictor = DefaultPredictor(self.config)
 
         outputs = predictor(img)
         # print(outputs['instances'].pred_masks[0])
