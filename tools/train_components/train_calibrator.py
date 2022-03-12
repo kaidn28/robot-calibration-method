@@ -14,7 +14,7 @@ def parse_args():
     #chessboard corner detection and params
     parser.add_argument('--chessboard_corner_re_detect', type=bool, default=False)
     parser.add_argument('--chessboard_image', type=str, help = 'path to chessboard image to corner detection', default='./datasets/chessboard_images/dataset_05032022.png')
-    parser.add_argument('--cell_length', help= 'edge of a cell of the chessboard in cm', type=int, default = 3)
+    parser.add_argument('--cell_length', help= 'edge of a cell of the chessboard in cm', type=int, default = 2.9)
     #image correction and params
     parser.add_argument('--train_image_correction', type=bool, default= False)
     parser.add_argument('--corners', type=str, default="/")

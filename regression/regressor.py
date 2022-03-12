@@ -19,7 +19,7 @@ class Regressor:
             self.c = np.random.rand(2)
         self.alpha = 0
         self.beta = 0
-    def fit(self, Ps, As, lr = 1, max_iteration = 1000, print_after= 1, valid_size = 0.75): 
+    def fit(self, Ps, As, lr = 0.01, max_iteration = 1000, print_after= 100, valid_size = 0.25): 
         # print("P: ", Ps)
         # print("A: ", As)
         P_train, P_val, A_train, A_val = train_test_split(Ps, As, test_size = valid_size, random_state=43)
@@ -37,7 +37,9 @@ class Regressor:
             g = self.grad(c, alpha, P_train, A_train)
             if np.linalg.norm(g) < 1e-4:
                 break
-            c -= lr*g
+            # print(c-lr*g)
+
+            c = c-lr*g
             loss = self.calculateLoss(c, alpha, P_train, A_train)
             if iter % print_after == 0:
                 print("iteration {}: ".format(iter))
@@ -55,29 +57,34 @@ class Regressor:
         err_xs = []
         err_ys = []
         errs = []
+        ori_errs = []
         print("______validating_______")
         t_valid_start = time.time()
         for i, p in enumerate(P_val):
             a = A_val[i]
             # reg_a = p + (c-p)/alpha
             reg_a = p + (c - p)/alpha
-            print('original: ', p)
-            print('regression result: ', reg_a)
-            print('original error: ', np.linalg.norm(p-a))
-            print('after regress error:', np.linalg.norm(reg_a -a))
-            print('ground truth: ', a)
+            # if i % (P_val.shape[0]//3) == 0:
+            #     print('original: ', p)
+            #     print('regression result: ', reg_a)
+            #     print('original error: ', np.linalg.norm(p-a))
+            #     print('after regress error:', np.linalg.norm(reg_a -a))
+            #     print('ground truth: ', a)
             err_x = np.abs((reg_a - a)[0])
             err_y = np.abs((reg_a - a)[1]) 
             err = np.linalg.norm(reg_a - a)
+            ori_errs.append(np.linalg.norm(p-a))
             errs.append(err)
             err_xs.append(err_x)
             err_ys.append(err_y)
         t_valid_end = time.time()
         mean_err = np.mean(errs)
+        mean_ori_err = np.mean(ori_errs)
         print("______end validating_______")
-        print('mean err: {}'.format(mean_err))
+        print("original err: {}".format(mean_ori_err))
+        print('after err: {}'.format(mean_err))
         print("valid time: ", (t_valid_end - t_valid_start)*1000)
-        print("valid time avg: ", (t_valid_end - t_valid_start)*200)
+        print("valid time avg: ", (t_valid_end - t_valid_start)*1000/len(P_val))
         dis = []
         err = []
         for i, p in enumerate(Ps):        
@@ -113,13 +120,13 @@ class Regressor:
         a = p + (self.c-p)/self.alpha
         return a
 
-    def grad(self, k, q, X, Y):
+    def grad(self, c, alpha, X, Y):
         dJ = 0
         for i, x in enumerate(X):
             y = Y[i]
             #print(k-x)
             #print('dJ: ', dJ)
-            dJ += (k-x)*4*(np.linalg.norm(k-x)/np.linalg.norm(x-y) -q)/(np.linalg.norm(x-y)*np.linalg.norm(k-x))
+            dJ += (c-x)*2*(np.linalg.norm(c-x)/np.linalg.norm(x-y) -alpha)/(np.linalg.norm(x-y)*np.linalg.norm(c-x))
         dJ = dJ/len(X)
         #print('dJ: ', dJ)
         return dJ
@@ -134,7 +141,7 @@ class Regressor:
             # print(x.shape)
             # print(y.shape)
             # print(c.shape)
-            alpha_sum += np.linalg.norm(c-x)/np.linalg.norm((x-y))
+            alpha_sum += np.linalg.norm(c-x)/np.linalg.norm(x-y)
         # print(alpha_sum)
         alpha =  alpha_sum/len(X)
         return alpha 
@@ -160,12 +167,12 @@ class Regressor:
     #     C = alpha*M + N
     #     print(C)
     #     return C, alpha
-    def calculateLoss(self, k, q, X, Y):
+    def calculateLoss(self, c, alpha, X, Y):
         loss = 0
         for i, x in enumerate(X):
             y = Y[i]
-            qi = np.linalg.norm((k-x))/np.linalg.norm((x-y))
-            loss += 2*(q - qi)**2/len(X)
+            qi = np.linalg.norm(c-x)/np.linalg.norm(x-y)
+            loss += ((alpha - qi)**2)/len(X)
         return loss
 
 
@@ -183,6 +190,7 @@ class MultiRegressor:
         assert len(Ps.keys()) == len(As.keys())
         for key in Ps.keys():
             if not np.isnan(np.sum(As[key])):
+                print(key)
                 path = "{}{}/{}.pkl".format(self.params_dir, key, time.ctime(time.time()))
                 last_path = "{}{}/last.pkl".format(self.params_dir, key)
                 self.regressors[key] = Regressor(c_initial_loc)

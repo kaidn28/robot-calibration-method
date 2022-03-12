@@ -106,7 +106,7 @@ class Calibrator:
         img_cell_lengths = self.transformation_params['img_cell_lengths']
         #print(img_cell_lengths)
         # print(f"img_cell_length: {img_cell_lengths}")
-        int_loc = self.interpolator.predict(object_loc, origin_loc, img_cell_lengths, cell_length, corner_mat, method="bilinear")
+        int_loc = self.interpolator.predict(object_loc, origin_loc, img_cell_lengths, cell_length, corner_mat, method="linear")
         return int_loc
 
     def test(self, args):
