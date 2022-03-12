@@ -8,9 +8,12 @@ import os
 
 
 class ObjectSegment:
-    def __init__(self, cfg):
-        self.cfg = cfg
-        predictor = DefaultPredictor(self.cfg)
+    def __init__(self, config= None):
+        if config is None:
+            self.config = cfg()
+        else: 
+            self.config = config
+        self.predictor = DefaultPredictor(self.config)
 
     def train(self):
         pass
@@ -25,8 +28,8 @@ class ObjectSegment:
         masks = masks.int()
         o = []
         for i, mask in enumerate(masks):
-            polygons = Mask(np.array(masks[0])).polygons()
-            print(outputs['instances'].pred_classes.tolist()[i] == 0)
+            polygons = Mask(np.array(mask)).polygons()
+            # print(outputs['instances'].pred_classes.tolist()[i] == 0)
             if outputs['instances'].pred_classes.tolist()[i] == 0:
                 o.append({"class_name": "black", "polygon": polygons.points})
             elif outputs['instances'].pred_classes.tolist()[i] == 1:

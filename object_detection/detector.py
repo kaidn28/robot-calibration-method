@@ -38,7 +38,7 @@ class ObjectDetector:
         o = []
         for i, mask in enumerate(masks):
             polygons = Mask(np.array(masks[0])).polygons()
-            print(outputs['instances'].pred_classes.tolist()[i] == 0)
+            # print(outputs['instances'].pred_classes.tolist()[i] == 0)
             if outputs['instances'].pred_classes.tolist()[i] == 0:
                 o.append({"class_name": "black", "polygon": polygons.points})
             elif outputs['instances'].pred_classes.tolist()[i] == 1:

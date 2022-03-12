@@ -3,7 +3,7 @@ import cv2
 import pickle
 class ImageCorrector:
     def __init__(self):
-        last_saved_params = "./out_dir/train/calibration/image_correction/parameters/last.pkl"
+        last_saved_params = "./out_dir/parameters/calibration/image_correction/last.pkl"
         try:
             self.params = pickle.load(open(last_saved_params, "rb"))
         except:
@@ -14,7 +14,7 @@ class ImageCorrector:
         img_shape = img.shape[::2]
         image_points = []
         object_points = []
-        print(mat.shape)
+        # print(mat.shape)
         for col in range(mat.shape[0]):
             for row in range(mat.shape[1]):
                 cell = mat[col, row]
@@ -62,7 +62,7 @@ class ImageCorrector:
         # print(calib_params) 
         pass
     def undistort(self, img):
-        print(self.params)
+        # print(self.params)
         mtx =self.params['mtx']
         dist = self.params['dist']
         #print(dist)

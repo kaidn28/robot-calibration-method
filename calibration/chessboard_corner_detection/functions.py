@@ -63,7 +63,7 @@ def getMatBoundary(corners):
             max_y = y
         elif y < min_y:
             min_y = y
-    print(min_x, min_y, max_x, max_y)
+    # print(min_x, min_y, max_x, max_y)
     return min_x, min_y, max_x, max_y
 # initialize corner matrix with detected corners
 def initializeMat(corners, min_x, min_y, max_x, max_y, hoz_avg_ratio, ver_avg_ratio):
@@ -87,9 +87,9 @@ def initializeMat(corners, min_x, min_y, max_x, max_y, hoz_avg_ratio, ver_avg_ra
     return mat
 #fill in the blanks in the initialized matrix
 def refineMat(mat):
-    print(mat[1,:])
+    # print(mat[1,:])
     num_col, num_row = mat.shape[:2]
-    print(num_col, num_row)
+    # print(num_col, num_row)
     blanks = []
     for i,col in enumerate(mat):
         for j, cell in enumerate(col):
@@ -122,7 +122,7 @@ def refineMat(mat):
 
 def getCornerMat(corners, num_samples = 5):
     hoz_avg_ratio, ver_avg_ratio = getAvgRatios(corners, num_samples)
-    print(hoz_avg_ratio, ver_avg_ratio)
+    # print(hoz_avg_ratio, ver_avg_ratio)
     min_x, min_y, max_x, max_y = getMatBoundary(corners)
     mat = initializeMat(corners, min_x, min_y, max_x, max_y, hoz_avg_ratio, ver_avg_ratio)
     mat = refineMat(mat)

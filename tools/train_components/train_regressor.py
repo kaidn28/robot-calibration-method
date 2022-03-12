@@ -5,13 +5,12 @@ import os
 import sys
 import argparse
 import pandas as pd
-from object_detection.segment import ObjectSegment
 import torch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../'))
 
 from regression import MultiRegressor
 from calibration import Calibrator
-from object_detection import ObjectDetector
+from object_detection import ObjectDetector, ObjectSegment
 
 torch.cuda.empty_cache()
 def parse_args():
@@ -19,8 +18,8 @@ def parse_args():
     
     #regresson and params
     parser.add_argument('--train_regressor', type=bool, default=True)
-    parser.add_argument('--gt', type =str, default='./datasets/regression_gt/dataset_29072021.csv')
-    parser.add_argument('--object_images', type=str, help='path to images', default= './datasets/object_images/dataset_29072021/')
+    parser.add_argument('--gt', type =str, default='./datasets/regression_gt/dataset_05032022.csv')
+    parser.add_argument('--object_images', type=str, help='path to images', default= './datasets/object_images/dataset_05032022/')
     parser.add_argument('--out_dir', type=str, default="./out_dir/")
     parser.add_argument('--calibration_mode', type = str, default="test")
     parser.add_argument('--object_detection_mode', type = str, default="test")
@@ -49,58 +48,60 @@ def main():
     for n in img_names:
         img_path = os.path.join(args.object_images, n)
         img = cv2.imread(img_path)
-        _, img_center = calibrator.transform((img.shape[1]/2, img.shape[0]/2))
         udt_img = calibrator.undistort(img)
+        _, img_center = calibrator.transform((udt_img.shape[1]/2, udt_img.shape[0]/2))
         objects = object_detector.predict(udt_img)
         # print(n)
         # print(n)
+        # print(objects)
         for o in objects:
-            if o['class_name'] == 'red':
-                print(o)
-                # print('initial loc: ', o['center'])  
-                cab_loc, scaling_loc = calibrator.transform(o['center'])
-                gt_loc = gt_df.loc[n, ["{}_x".format(o['class_name']), "{}_y".format(o['class_name'])]].to_numpy()
-                cab_loc = np.round(cab_loc,2)
-                scaling_loc = np.round(scaling_loc, 2)
+            # print(o['polygon'])
+            polygon = o['polygon'][0]
+            o['center'] = np.sum(polygon, axis=0)/len(polygon)
+            print(o['class_name'])
+            print(o['center'])
+            # print(o['center'])
+            # print('initial loc: ', o['center'])  
+            cab_loc, scaling_loc = calibrator.transform(o['center'])
+            gt_loc = gt_df.loc[n, ["{}_x".format(o['class_name']), "{}_y".format(o['class_name'])]].to_numpy()
+            cab_loc = np.round(cab_loc,2) 
+            scaling_loc = np.round(scaling_loc, 2)
 
-                if not o['class_name'] in cab_locs.keys():
-                    cab_locs[o['class_name']] = np.empty((0,2))
-                cab_locs[o['class_name']] = np.concatenate((cab_locs[o['class_name']], cab_loc.reshape(1,2)))
+            if not o['class_name'] in cab_locs.keys():
+                cab_locs[o['class_name']] = np.empty((0,2))
+            cab_locs[o['class_name']] = np.concatenate((cab_locs[o['class_name']], cab_loc.reshape(1,2)))
+            
+            if not o['class_name'] in scaling_locs.keys():
+                scaling_locs[o['class_name']] = np.empty((0,2))
+            scaling_locs[o['class_name']] = np.concatenate((scaling_locs[o['class_name']], scaling_loc.reshape(1,2)))
+
+            if not o['class_name'] in gt_locs.keys():
+                gt_locs[o['class_name']] = np.empty((0,2))
+            gt_locs[o['class_name']] = np.concatenate((gt_locs[o['class_name']], gt_loc.reshape(1,2)))
+            data = data.append({
+                    'img_name': n,
+                    'sca_x': scaling_loc[0],
+                    'sca_y': scaling_loc[1],
+                    'cab_x': cab_loc[0],
+                    'cab_y': cab_loc[1],
+                    'gt_x': gt_loc[0],
+                    'gt_y': gt_loc[1]
+                    }, ignore_index=True)
+            
+            # img_cp = udt_img.copy()
+            # center = (np.int(o['center'][0]), np.int(o['center'][1]))
+
+            # cv2.circle(img_cp, center, 5, (0,0,255), -1)
+            # cv2.putText(img_cp, f"{list(cab_loc)}", center, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0, 255), 1, cv2.LINE_AA,False)
+            # for i, c in enumerate(ne_co):
+            #     corner = (int(c[0]), int(c[1]))
+            #     corner_real = (ne_cor_real[i][0], ne_cor_real[i][1])
+            #     cv2.circle(img_cp, corner, 2, (255,0,0), -1)
+            #     cv2.putText(img_cp, f"{list(corner_real)}", corner, cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255,0,0), 1, cv2.LINE_AA,False)
                 
-                if not o['class_name'] in scaling_locs.keys():
-                    scaling_locs[o['class_name']] = np.empty((0,2))
-                scaling_locs[o['class_name']] = np.concatenate((scaling_locs[o['class_name']], scaling_loc.reshape(1,2)))
-
-                if not o['class_name'] in gt_locs.keys():
-                    gt_locs[o['class_name']] = np.empty((0,2))
-                gt_locs[o['class_name']] = np.concatenate((gt_locs[o['class_name']], gt_loc.reshape(1,2)))
-                data = data.append({
-                        'img_name': n,
-                        'sca_x': scaling_loc[0],
-                        'sca_y': scaling_loc[1],
-                        'cab_x': cab_loc[0],
-                        'cab_y': cab_loc[1],
-                        'gt_x': gt_loc[0],
-                        'gt_y': gt_loc[1]
-                        }, ignore_index=True)
-                
-                # img_cp = udt_img.copy()
-                # center = (np.int(o['center'][0]), np.int(o['center'][1]))
-
-                # cv2.circle(img_cp, center, 5, (0,0,255), -1)
-                # cv2.putText(img_cp, f"{list(cab_loc)}", center, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0, 255), 1, cv2.LINE_AA,False)
-                # for i, c in enumerate(ne_co):
-                #     corner = (int(c[0]), int(c[1]))
-                #     corner_real = (ne_cor_real[i][0], ne_cor_real[i][1])
-                #     cv2.circle(img_cp, corner, 2, (255,0,0), -1)
-                #     cv2.putText(img_cp, f"{list(corner_real)}", corner, cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255,0,0), 1, cv2.LINE_AA,False)
-                    
-                # cv2.imshow('abc', img_cp)
-                # cv2.waitKey()
-                # cv2.destroyAllWindows()
-
-            else:
-                continue
+            # cv2.imshow('abc', img_cp)
+            # cv2.waitKey()
+            # cv2.destroyAllWindows()
         
 
     # data['sca_err_x'] = np.abs(data['sca_x'] - data['gt_x'])

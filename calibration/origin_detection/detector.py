@@ -8,14 +8,14 @@ import numpy
 
 class OriginDetector:
     def __init__ (self):
-        self.oDetector = ObjectDetector("./out_dir/parameters/calibration/origin_detection/center.pt")
+        self.oDetector = ObjectDetector(weight="./out_dir/parameters/calibration/origin_detection/center-new.pt")
     
     def fit(self, args):
         pass
 
     def predict(self, img):    
         res = self.oDetector.predict(img)
-        print(res)
+        # print(res)
         #print(res)
         # print(org.xcenter[0])
         return res[0]['center']

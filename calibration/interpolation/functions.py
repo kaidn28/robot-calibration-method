@@ -50,6 +50,10 @@ def nearest4Ways(p, mat):
     return np.array([lt, rt, lb, rb])
 
 def toReal(topk, origin, ic_len, c_len):
+    print("topk : ")
+    print(topk)
+    print("origin: ")
+    print(origin)
     re_allo = topk - origin
     topk_real = roundToPoint5(np.multiply(re_allo, 1/ic_len))*c_len
     # print(a2)

@@ -59,7 +59,7 @@ class ChessboardCornerDetector:
                         corners.append(np.array([x,y]))
         #print(corners)
         mat, ratios = getCornerMat(corners)
-        print(mat.shape)
+        # print(mat.shape)
         # for i, (x, y) in enumerate(corners):
         #     cv2.circle(self.img, (int(x),int(y)), 5, (0,0, 255), -1)
         #     #cv2.putText(self.img, str(i), (int(x),int(y)),cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2)
