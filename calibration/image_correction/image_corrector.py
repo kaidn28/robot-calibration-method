@@ -11,7 +11,7 @@ class ImageCorrector:
         pass
     def fit(self, mat, img):
         # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        img_shape = img.shape[::2]
+        img_shape = np.array(img.shape[::2])
         image_points = []
         object_points = []
         # print(mat.shape)
@@ -20,18 +20,22 @@ class ImageCorrector:
                 cell = mat[col, row]
                 if cell[0] != 0:
                     cell_format = np.float32(cell)
+                    #print(cell)
                     cell_idx_format = np.float32(np.array([col, row,0]))
+                    #print(cell_format)
+                    #print(cell_idx_format)
                     image_points.append(cell_format.reshape(-1, 2))
                     object_points.append(cell_idx_format.reshape(-1, 3))
         
         image_points = np.array(image_points)
         object_points = np.array(object_points)
-
-        
-        ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera([object_points], [image_points], img_shape, None, None)
+        # print(type(img_shape))
+            
+        ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera([object_points], [image_points], img_shape*2, None, None)
         if ret:
-            newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, img_shape, 1, img_shape)
-            return mtx, newcameramtx, dist 
+            newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, img_shape , 1, img_shape)
+            print(roi)
+            return mtx, newcameramtx, dist
         else:
             raise Exception("Cannot calculate parameters")
     def test(self):

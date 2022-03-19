@@ -34,9 +34,9 @@ def main():
     # print(args)
     calibrator = Calibrator(args)
     img = cv2.imread(args.chessboard_image)
-    cv2.imshow("img", img)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+    # cv2.imshow("img", img)
+    # cv2.waitKey()
+    # cv2.destroyAllWindows()
     calibrator.fit(img)
 
     

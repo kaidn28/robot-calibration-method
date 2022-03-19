@@ -6,7 +6,7 @@ from detectron2.config import get_cfg
 from imantics import Polygons, Mask
 import os
 class ObjectDetector:
-    def __init__(self, config = None, weight = "./out_dir/parameters/object_detection/super-best.pt"):
+    def __init__(self, config = None, weight = "./out_dir/parameters/object_detection/best.pt"):
         self.weight = weight
         self.model = yolo(self.weight)
         self.config = config

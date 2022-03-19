@@ -32,24 +32,53 @@ class Calibrator:
             self.chessboard_mat = pickle.load(open(self.chessboard_detection_params_path + "last.pkl", "rb"))
             self.correction_params = pickle.load(open(self.image_correction_params_path + "last.pkl", "rb"))
             self.transformation_params = pickle.load(open(self.origin_detection_params_path + "last.pt", "rb"))
+            print(self.transformation_params)
         elif args.calibration_mode == "train":
             self.cell_length = args.cell_length
     def fit(self, img):
 
         chessboard_mat, img_cell_lengths = self.ccDetector.detect(img)
-
+        # print(chessboard_mat.shape)
+        # corners = []
+        # for i in range(chessboard_mat.shape[0]):
+        #     for j in range(chessboard_mat.shape[1]):
+        #         if np.linalg.norm(chessboard_mat[i,j] >0):
+        #             x, y = chessboard_mat[i,j]
+        #             print(x, y, "\t", i, j)
+        #             x_int, y_int = int(x), int(y)
+        #             # corners.append(np.array([x_int, y_int]))
+        #             cv2.circle(img, (x_int, y_int), 5, (255,0,0), -1)
         mtx, newmtx, dist = self.imCorrector.fit(chessboard_mat, img)
+
         undistort_img = cv2.undistort(img, mtx, dist, newmtx)
+        # cv2.imshow("xyz", img)
+        # cv2.imshow('abc', undistort_img)
+        # cv2.waitKey()
+        # cv2.destroyAllWindows()
     
         #re-detect after distortion
-        chessboard_mat, img_cell_lengths = self.ccDetector.detect(undistort_img)
+        # chessboard_mat, img_cell_lengths = self.ccDetector.detect(undistort_img)
+        # print(chessboard_mat.shape)
+        corners = []
+        # for i in range(chessboard_mat.shape[0]):
+        #     for j in range(chessboard_mat.shape[1]):
+        #         if np.linalg.norm(chessboard_mat[i,j] >0):
+        #             x, y = chessboard_mat[i,j]
+        #             print(x, y, "\t", i, j)
+        #             x_int, y_int = int(x), int(y)
+        #             # corners.append(np.array([x_int, y_int]))
+        #             cv2.circle(undistort_img, (x_int, y_int), 5, (255,0,0), -1)
+        # cv2.imshow("xyz", img)
+        # cv2.imshow('abc', undistort_img)
+        # cv2.waitKey()
+        # cv2.destroyAllWindows()
         correction_params = {
             "newmtx": newmtx,
             "mtx": mtx,
             "dist": dist
         }
-        origin = self.orDetector.predict(undistort_img)
-
+        # origin = self.orDetector.predict(undistort_img)
+        origin = self.orDetector.predict(img)
         transformation_params = {
             "origin": origin,
             "cell_length": self.cell_length,
@@ -106,8 +135,8 @@ class Calibrator:
         img_cell_lengths = self.transformation_params['img_cell_lengths']
         #print(img_cell_lengths)
         # print(f"img_cell_length: {img_cell_lengths}")
-        int_loc = self.interpolator.predict(object_loc, origin_loc, img_cell_lengths, cell_length, corner_mat, method="linear")
-        return int_loc
+        
+        return self.interpolator.predict(object_loc, origin_loc, img_cell_lengths, cell_length, corner_mat)
 
     def test(self, args):
         pass

@@ -47,16 +47,28 @@ def nearest4Ways(p, mat):
             elif c[0] > p[0] and c[1] > p[1] and dis < rb_dis:
                 rb = c
                 rb_dis = dis
+    # print(lt.shape)
+    # print(rt.shape)
+    # print(lb.shape)
+    # print(rb.shape)
+
     return np.array([lt, rt, lb, rb])
 
 def toReal(topk, origin, ic_len, c_len):
-    print("topk : ")
-    print(topk)
-    print("origin: ")
-    print(origin)
+    # print("topk : ")
+    # print(topk)
+    # print("origin: ")
+    # print(origin)
     re_allo = topk - origin
-    topk_real = roundToPoint5(np.multiply(re_allo, 1/ic_len))*c_len
+    # print("re allocation: ")
+    # print(re_allo)
+    # print("ic len: ")
+    # print(ic_len)
+    # print("c len: ")
+    # print(c_len)
+    topk_real = roundToPoint5(re_allo/max(ic_len))*c_len
     # print(a2)
+    print(topk_real)
     return topk_real
 
 def roundToPoint5(num):

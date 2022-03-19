@@ -4,9 +4,10 @@ from detectron2 import model_zoo
 from detectron2.config import get_cfg
 
 def yolo(weight):
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path=weight)
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path=weight, device='cpu')
     model.conf = 0.4
     model.iou = 0.4
+
     
     return model
 def cfg():
